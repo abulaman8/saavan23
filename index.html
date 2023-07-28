@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>Test</h1>
+    <div id="g_id_onload"
+     data-client_id="926224938000-9vml4i2abo63vvq09skmg8mil13ngtpg.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-callback="callback"
+     data-auto_select="true"
+     data-itp_support="true">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="outline"
+     data-text="signin_with"
+     data-size="large"
+     data-logo_alignment="left">
+</div>
+    <script src="https:accounts.google.com/gsi/client" async></script>
+    <script>
+       function callback(response) {
+           creds = response.credential;
+           client_id = "60IImolWWKxNVXpcoBJC5Fp80dyARXvLGYC8nE5a"
+           client_secret = "EoF3a1Zc3mAPi6X3mlT03Ys6xcrVNtIvFNbf1b0AigwdrJ2tglzP5S2I3PgJN7VAMGc7XoLXnkOQu9FaJhRTSvmweOZrMbDj2oWMXHRuD58ys8VXT67w0BBt0RMQttqW"
+           console.log(`creds: ${creds}`)
+           
+            api_call = fetch(
+                'http://localhost:8000/auth/convert-token/',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        backend: 'google-identity',
+                        token: creds,
+                        grant_type: 'convert_token',
+                        client_id: client_id,
+                        client_secret: client_secret,
+                        
+                    })
+                }
+            )
+            .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                })
+
+
+        }
+    </script>
+</body>
+</html>
+
