@@ -30,7 +30,6 @@ class StudentTeam(models.Model):
     name = models.CharField(max_length=200)
     members = models.ManyToManyField(Student, related_name="teams")
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    application_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name + ' - ' + str(self.event)

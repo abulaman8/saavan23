@@ -7,6 +7,7 @@ class Judge(models.Model):
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
     image = models.ImageField(upload_to='images/', blank=True)
+    
 
     def __str__(self):
         return self.name
@@ -72,10 +73,13 @@ class Event(models.Model):
     ig_link = models.URLField(max_length=600, blank=True, null=True)
     fb_link = models.URLField(max_length=600, blank=True, null=True)
     twitter_link = models.URLField(max_length=600, blank=True, null=True)
+    misc_links = models.URLField(max_length=600, blank=True, null=True)
     judges = models.ManyToManyField(Judge, blank=True)
     mentors = models.ManyToManyField(Mentor, blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True)
     pictures = models.ManyToManyField(EventPicture, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
