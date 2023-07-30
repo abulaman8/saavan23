@@ -7,7 +7,6 @@ class Judge(models.Model):
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
     image = models.ImageField(upload_to='images/', blank=True)
-    
 
     def __str__(self):
         return self.name
@@ -80,6 +79,7 @@ class Event(models.Model):
     pictures = models.ManyToManyField(EventPicture, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
