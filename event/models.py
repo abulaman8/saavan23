@@ -6,7 +6,7 @@ class Judge(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
-    image = models.ImageField(upload_to='images/', blank=True)
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -16,7 +16,7 @@ class Mentor(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
-    image = models.ImageField(upload_to='images/', blank=True)
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -26,7 +26,7 @@ class Speaker(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
-    image = models.ImageField(upload_to='images/', blank=True)
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -41,8 +41,8 @@ class Category(models.Model):
 
 class Sponsor(models.Model):
     name = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to='images/', blank=True)
-    website = models.URLField(max_length=600, blank=True)
+    logo = models.ImageField(upload_to='images/', blank=True, null=True)
+    website = models.URLField(max_length=600, blank=True, null=True)
     type = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -67,6 +67,7 @@ class Event(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     fee = models.IntegerField(default=0)
     max_participants = models.IntegerField(null=True, blank=True)
+    is_team_event = models.BooleanField(default=False)
     meet_link = models.URLField(max_length=600, blank=True, null=True)
     yt_link = models.URLField(max_length=600, blank=True, null=True)
     ig_link = models.URLField(max_length=600, blank=True, null=True)
@@ -76,7 +77,9 @@ class Event(models.Model):
     judges = models.ManyToManyField(Judge, blank=True)
     mentors = models.ManyToManyField(Mentor, blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True)
+    speakers = models.ManyToManyField(Speaker, blank=True)
     pictures = models.ManyToManyField(EventPicture, blank=True)
+    template = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_approved = models.BooleanField(default=False)

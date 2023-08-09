@@ -16,12 +16,12 @@ class EventHead(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     handle = models.CharField(max_length=200)
     phone = models.CharField(max_length=200)
-    profile_picture = models.ImageField(upload_to='profile_pictures')
+    profile_picture = models.ImageField(upload_to='profile_pictures', null=True, blank=True)
 
 
 class OrganizingTeam(models.Model):
     event_head = models.ForeignKey(EventHead, on_delete=models.CASCADE)
-    organizers = models.ManyToManyField(Organizer)
+    organizers = models.ManyToManyField(Organizer, blank=True)
 
 
 

@@ -6,10 +6,10 @@ from event.models import Event
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     handle = models.CharField(max_length=200)
-    date_of_birth = models.DateField()
-    phone_number = models.CharField(max_length=20)
-    profile_picture = models.ImageField(upload_to='profile_pictures')
-    events = models.ManyToManyField(Event, related_name="participants")
+    date_of_birth = models.DateField(null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures', null=True, blank=True)
+    events = models.ManyToManyField(Event, related_name="participants", blank=True)
     
     def __str__(self):
         return self.handle
@@ -28,7 +28,7 @@ class StudentEventApplication(models.Model):
 
 class StudentTeam(models.Model):
     name = models.CharField(max_length=200)
-    members = models.ManyToManyField(Student, related_name="teams")
+    members = models.ManyToManyField(Student, related_name="teams", blank=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -87,3 +87,35 @@ def secretary_logout(request):
     return redirect('/secretary/login/')
 
 
+@secretary_required
+def approve_event(request, id):
+    try:
+        event = Event.objects.get(id=id)
+        if not event.is_approved:
+            event.is_approved = True
+            event.save()
+            messages.success(request, 'Event approved successfully')
+            return redirect('/secretary')
+        else:
+            messages.error(request, 'Event already approved')
+            return redirect('/secretary')
+    except Event.DoesNotExist:
+        messages.error(request, 'Event not found')
+        return redirect('/secretary')
+
+@secretary_required
+def disapprove_event(request, id):
+    try:
+        event = Event.objects.get(id=id)
+        if event.is_approved:
+            event.is_approved = False
+            event.save()
+            messages.success(request, 'Event disapproved successfully')
+            return redirect('/secretary')
+        else:
+            messages.error(request, 'Event already disapproved')
+            return redirect('/secretary')
+    except Event.DoesNotExist:
+        messages.error(request, 'Event not found')
+        return redirect('/secretary')
+
