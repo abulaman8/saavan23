@@ -16,7 +16,7 @@ class EventHead(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     handle = models.CharField(max_length=200)
     phone = models.CharField(max_length=200)
-    profile_picture = models.ImageField(upload_to='profile_pictures', null=True, blank=True)
+    profile_picture = models.URLField(max_length=600, null=True, blank=True)
 
 
 class OrganizingTeam(models.Model):

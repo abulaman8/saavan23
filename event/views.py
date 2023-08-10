@@ -22,6 +22,7 @@ from .models import (
         EventPicture
 
         )
+from student.models import Student, StudentTeam, Winner, WinningTeam
 
 
 def event_head_required(view_func):
@@ -44,6 +45,11 @@ def event_head_required(view_func):
                     {'message': 'You are not authorized to view this page'},
                     status=status.HTTP_401_UNAUTHORIZED
                     )
+        except TypeError:
+            return Response(
+                    {'message': 'You are not authorized to view this page, try logging in'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                    )
     return wrap
 
 
@@ -57,6 +63,7 @@ def create_event(request):
     mentors = data.pop('mentors', None)
     sponsors = data.pop('sponsors', None)
     team = data.pop('team', None)
+    pictures = data.pop('pictures', None)
     data["registration_start_date"] = datetime.fromisoformat(data["registration_start_date"])
     data["registration_end_date"] = datetime.fromisoformat(data["registration_end_date"])
     data["date"] = datetime.fromisoformat(data["date"])
@@ -69,25 +76,85 @@ def create_event(request):
     mentor_instances = []
     sponsor_instances = []
     organizer_instances = []
+    picture_instances = []
     for judge in judges:
-        judge_instances.append(Judge.objects.get_or_create(**judge)[0])
+        try:
+            judge_instances.append(Judge.objects.get_or_create(**judge)[0])
+        except Exception as e:
+            print(e)
+            return Response(
+                    {'message': e},
+                    status=status.HTTP_400_BAD_REQUEST
+                    )
     for speaker in speakers:
-        speaker_instances.append(Speaker.objects.get_or_create(**speaker)[0])
+        try:
+            speaker_instances.append(Speaker.objects.get_or_create(**speaker)[0])
+        except Exception as e:
+            print(e)
+            return Response(
+                    {'message': e},
+                    status=status.HTTP_400_BAD_REQUEST
+                    )
     for mentor in mentors:
-        mentor_instances.append(Mentor.objects.get_or_create(**mentor)[0])
+        try:
+            mentor_instances.append(Mentor.objects.get_or_create(**mentor)[0])
+        except Exception as e:
+            print(e)
+            return Response(
+                    {'message': e},
+                    status=status.HTTP_400_BAD_REQUEST
+                    )
     for sponsor in sponsors:
-        sponsor_instances.append(Sponsor.objects.get_or_create(**sponsor)[0])
-    for organizer in team:
-        organizer_instances.append(Organizer.objects.get_or_create(**organizer)[0])
+        try:
+            sponsor_instances.append(Sponsor.objects.get_or_create(**sponsor)[0])
+        except Exception as e:
+            print(e)
+            return Response(
+                    {'message': e},
+                    status=status.HTTP_400_BAD_REQUEST
+                    )
+    for picture in pictures:
+        try:
+            picture_instances.append(EventPicture.objects.get_or_create(**picture)[0])
+        except Exception as e:
+            print(e)
+            return Response(
+                    {'message': e},
+                    status=status.HTTP_400_BAD_REQUEST
+                    )
 
-    organizing_team = OrganizingTeam.objects.create(event_head=event_head)
+    for organizer in team:
+        try:
+            organizer_instances.append(Organizer.objects.get_or_create(**organizer)[0])
+        except Exception as e:
+            print(e)
+            return Response(
+                    {'message': e},
+                    status=status.HTTP_400_BAD_REQUEST
+                    )
+    try:
+        organizing_team = OrganizingTeam.objects.create(event_head=event_head)
+    except Exception as e:
+        print(e)
+        return Response(
+                {'message': e},
+                status=status.HTTP_400_BAD_REQUEST
+                )
     organizing_team.organizers.set(organizer_instances)
     data['team'] = organizing_team
-    event = Event.objects.create(**data)
+    try:
+        event = Event.objects.create(**data)
+    except Exception as e:
+        print(e)
+        return Response(
+                {'message': e},
+                status=status.HTTP_400_BAD_REQUEST
+                )
     event.judges.set(judge_instances)
     event.speakers.set(speaker_instances)
     event.mentors.set(mentor_instances)
     event.sponsors.set(sponsor_instances)
+    event.pictures.set(picture_instances)
     return Response({"message": "event created successfully!!!"}, status=status.HTTP_201_CREATED)
 
 
@@ -124,6 +191,7 @@ def update_event(request, id):
     mentors = data.pop('mentors', None)
     sponsors = data.pop('sponsors', None)
     team = data.pop('team', None)
+    pictures = data.pop('pictures', None)
     data["registration_start_date"] = datetime.fromisoformat(data["registration_start_date"])
     data["registration_end_date"] = datetime.fromisoformat(data["registration_end_date"])
     data["date"] = datetime.fromisoformat(data["date"])
@@ -136,25 +204,56 @@ def update_event(request, id):
     mentor_instances = []
     sponsor_instances = []
     organizer_instances = []
+    picture_instances = []
     for judge in judges:
-        judge_instances.append(Judge.objects.get_or_create(**judge)[0])
+        judge_object = judge.objects.get_or_create(**judge)[0]
+        for key, value in judge.items():
+            setattr(judge_object, key, value)
+        judge_object.save()
+        judge_instances.append(judge_object)
     for speaker in speakers:
-        speaker_instances.append(Speaker.objects.get_or_create(**speaker)[0])
+        speaker_object = Speaker.objects.get_or_create(**speaker)[0]
+        for key, value in speaker.items():
+            setattr(speaker_object, key, value)
+        speaker_object.save()
+        speaker_instances.append(speaker_object)
     for mentor in mentors:
-        mentor_instances.append(Mentor.objects.get_or_create(**mentor)[0])
+        mentor_object = Mentor.objects.get_or_create(**mentor)[0]
+        for key, value in mentor.items():
+            setattr(mentor_object, key, value)
+        mentor_object.save()
+        mentor_instances.append(mentor_object)
     for sponsor in sponsors:
-        sponsor_instances.append(Sponsor.objects.get_or_create(**sponsor)[0])
+        sponsor_object = Sponsor.objects.get_or_create(**sponsor)[0]
+        for key, value in sponsor.items():
+            setattr(sponsor_object, key, value)
+        sponsor_object.save()
+        sponsor_instances.append(sponsor_object)
+    for picture in pictures:
+        picture_object = EventPicture.objects.get_or_create(**picture)[0]
+        for key, value in picture.items():
+            setattr(picture_object, key, value)
+        picture_object.save()
+        picture_instances.append(picture_object)
     for organizer in team:
-        organizer_instances.append(Organizer.objects.get_or_create(**organizer)[0])
+
+        organizer_object = Organizer.objects.get_or_create(**organizer)[0]
+        for key, value in organizer.items():
+            setattr(organizer_object, key, value)
+        organizer_object.save()
+        organizer_instances.append(organizer_object)
 
     organizing_team = OrganizingTeam.objects.get_or_create(event_head=event_head)[0]
     organizing_team.organizers.set(organizer_instances)
     data['team'] = organizing_team
-    event = Event.objects.create(**data)
+    for key, value in data.items():
+        setattr(event, key, value)
+    event.save()
     event.judges.set(judge_instances)
     event.speakers.set(speaker_instances)
     event.mentors.set(mentor_instances)
     event.sponsors.set(sponsor_instances)
+    event.pictures.set(picture_instances)
     return Response({"message": "event created successfully!!!"}, status=status.HTTP_201_CREATED)
 
 
@@ -176,4 +275,54 @@ def get_categories(request):
     categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@event_head_required
+def add_winners(request):
+    data = request.data
+    event_id = data.get('event_id')
+    try:
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return Response({"message": "event does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    if event.team.event_head.user != request.user:
+        return Response({"message": "you are not authorized to add winners to this event"},
+                        status=status.HTTP_401_UNAUTHORIZED)
+    if event.is_team_event:
+        teams = data.get('teams')
+        for team in teams:
+            team_id = team.get('team_id')
+            try:
+                team_object = StudentTeam.objects.get(id=team_id)
+            except StudentTeam.DoesNotExist:
+                return Response({"message": "team does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            if team.event != event:
+                return Response({"message": "team does not belong to this event"}, status=status.HTTP_400_BAD_REQUEST)
+            winning_team = WinningTeam.objects.create(
+                    winner=team_object,
+                    event=event,
+                    position=int(team.get('position'))
+                    )
+        return Response({"message": "winners added successfully"}, status=status.HTTP_201_CREATED)
+    else:
+        students = data.get('students')
+        for student in students:
+            student_id = student.get('student_id')
+            try:
+                student_object = Student.objects.get(id=student_id)
+            except Student.DoesNotExist:
+                return Response({"message": "student does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            if event not in student_object.events.all():
+                return Response(
+                        {"message": "student does not belong to this event"},
+                        status=status.HTTP_400_BAD_REQUEST)
+            winning_student = Winner.objects.create(
+                    winner=student_object,
+                    event=event,
+                    position=int(student.get('position'))
+                    )
+
+        return Response({"message": "winners added successfully"}, status=status.HTTP_201_CREATED)
+
 

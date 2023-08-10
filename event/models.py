@@ -6,7 +6,7 @@ class Judge(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = models.URLField(max_length=600, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -16,7 +16,7 @@ class Mentor(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = models.URLField(max_length=600, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -26,7 +26,7 @@ class Speaker(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     bio = models.CharField(max_length=2000)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = models.URLField(max_length=600, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -41,7 +41,7 @@ class Category(models.Model):
 
 class Sponsor(models.Model):
     name = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to='images/', blank=True, null=True)
+    logo = models.URLField(max_length=600, blank=True, null=True)
     website = models.URLField(max_length=600, blank=True, null=True)
     type = models.CharField(max_length=200, blank=True, null=True)
 
@@ -50,7 +50,7 @@ class Sponsor(models.Model):
 
 
 class EventPicture(models.Model):
-    image = models.ImageField(upload_to='images/', blank=True)
+    image = models.URLField(max_length=600, blank=True)
 
     def __str__(self):
         return self.image.url
@@ -62,7 +62,7 @@ class Event(models.Model):
     registration_end_date = models.DateTimeField(null=True, blank=True)
     date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=360, null=True, blank=True)
-    description = models.CharField(max_length=2000)
+    description = models.TextField(null=True, blank=True)
     team = models.ForeignKey(OrganizingTeam, on_delete=models.CASCADE, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     fee = models.IntegerField(default=0)

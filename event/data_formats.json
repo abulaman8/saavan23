@@ -1,0 +1,104 @@
+{
+    "run django server cmd": "python manage.py runserver",
+    "run live-server": "live-server --watch=index.html",
+    "instructions": " with both servers running sign in from the index html page, access-token and refresh token will be logged in the console, send the access token as Bearer for every request",
+    "Base_Url": "http://localhost:8000/",
+    "event_creation": {
+        "method": "POST",
+        "note" : "judges, speakers, sponsors, mentors, pictures are all optional, meaning the array can be empty, but if there are objects, they have to follow the respective formats, and all the dates should be in iso format, js Date has a method to convert to iso i think..., and DO NOT leave out the trailing slash at the end of every point, all of them MUST end with a /",
+        "endpoint": "events/create-event/",
+        "categories": {
+            "Technical": 1,
+            "Cultural": 2,
+            "Professional": 3,
+            "Sports": 4,
+            "Workshops": 5
+        },
+        "data_format": {
+            "judges": [
+                {
+                    "name": "judge1",
+                    "email": "judge1@test.com",
+                    "bio": "judge1 bio",
+                    "image": "<valid image url>"
+                },
+                {
+                    "name": "judge2",
+                    "email": "judge2@test.com",
+                    "bio": "judge2 bio",
+                    "image": "<valid image url>"
+                }
+            ],
+            "mentors": [
+                {
+                    "name": "mentor1",
+                    "email": "mentor1@test.com",
+                    "bio": "mentor1 bio",
+                    "image": "<valid image url>"
+                }
+            ],
+            "speakers": [
+                {
+                    "name": "speaker1",
+                    "email": "speaker1@test.com",
+                    "bio": "speaker1 bio",
+                    "image": "<valid image url>"
+                }
+            ],
+            "sponsors": [
+                {
+                    "name": "google",
+                    "logo": "<valid image url>",
+                    "website": "<valid url>",
+                    "type": "<string max-length 200"
+                }
+            ],
+            "pictures": [
+                {
+                    "image": "<valid image url>"
+                }
+            ],
+            "name": "test",
+            "description": "desc",
+            "location": "string max-length 360",
+            "fee": "<integer default 0 optional>",
+            "max_participants": "<integer default None optional>",
+            "is_team_event": "<bool default false>",
+            "meet_link": "<valid url optional>",
+            "fb_link": "valid url optional>",
+            "ig_link": "valid url optional>",
+            "yt_link": "valid url optional>",
+            "twitter_link": "valid url optional>",
+            "misc_link": "valid url optional>",
+            "registration_start_date": "2023-08-08T18:26:28+0000",
+            "registration_end_date": "2023-09-08T18:26:28+0000",
+            "date": "2023-11-08T18:26:28+0000",
+            "category": "<int>, refer to categories to find the predefined categories, and their int IDs.",
+            "team": [
+                {
+                    "name": "org1",
+                    "email": "org1@test.com",
+                    "phone": "1234567890",
+                    "role": "web admin"
+                },
+                {
+                    "name": "org2",
+                    "email": "org2@test.com",
+                    "phone": "1234567890",
+                    "role": "web admin"
+                }
+            ],
+            "template": "<valid json to represent the applcation template for the event, no consequence to the server, optional, can be added later using update endpoint later>"
+        }
+    },
+    "event_update": {
+        "method": "PUT",
+        "endpoint": "events/update/<int:id>/",
+        "data_format": "exactly same as creation, but you have to send the whole data, that is, u have to send the old data too, else it'll be overwritten, for example, if you want to add a new judge, you have to send the whole json of the event with the judges array with old and new data."
+    },
+    "event_delete": {
+        "method": "DELETE",
+        "endpoint": "events/delete/<int:id>"
+    }
+
+}
