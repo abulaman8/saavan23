@@ -74,6 +74,7 @@ class Event(models.Model):
     fb_link = models.URLField(max_length=600, blank=True, null=True)
     twitter_link = models.URLField(max_length=600, blank=True, null=True)
     misc_links = models.URLField(max_length=600, blank=True, null=True)
+    website_links = models.URLField(max_length=600, blank=True, null=True)
     judges = models.ManyToManyField(Judge, blank=True)
     mentors = models.ManyToManyField(Mentor, blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True)
