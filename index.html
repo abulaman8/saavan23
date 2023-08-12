@@ -25,12 +25,14 @@
     <script>
        function callback(response) {
            creds = response.credential;
-           client_id = "60IImolWWKxNVXpcoBJC5Fp80dyARXvLGYC8nE5a"
-           client_secret = "EoF3a1Zc3mAPi6X3mlT03Ys6xcrVNtIvFNbf1b0AigwdrJ2tglzP5S2I3PgJN7VAMGc7XoLXnkOQu9FaJhRTSvmweOZrMbDj2oWMXHRuD58ys8VXT67w0BBt0RMQttqW"
+           client_id = "kM3nGTr00GxIWPFxs8cqpOe9md7jYdAf76D047fF"
+           client_secret = "Ui4d0m2ejOLTNhl3oYXq1VdTxlrqAvipuaV8AH4yJsvWHhcR1MjtjXwgd5xRy5KWyg9Hh3rZt6hYMfqrqE4H4B5EXIIYuuZy5C4fKl8fWASMb6eevPqQXVxkZcrg7VlN"
            console.log(`creds: ${creds}`)
            
             api_call = fetch(
                 'http://localhost:8000/auth/convert-token/',
+
+                // 'https://saavan23dev.onrender.com/auth/convert-token/',
                 {
                     method: 'POST',
                     headers: {
