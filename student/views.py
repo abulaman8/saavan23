@@ -1,8 +1,9 @@
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, authentication_classes
 from event.models import Event
 from .models import (
         Student,
@@ -12,6 +13,37 @@ from .models import (
         )
 
 from event.serializers import EventSerializer
+from .serializers import StudentSerializer
+
+
+def student_required(view_func):
+    # @permission_classes([IsAuthenticated])
+    @authentication_classes([OAuth2Authentication])
+    def wrap(request, *args, **kwargs):
+        print(request.user)
+        try:
+            student = Student.objects.get(user=request.user)
+            if student:
+                return view_func(request, *args, **kwargs)
+        
+            else:
+                return Response(
+                        {'message': 'You are not authorized to view this page'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                        )
+        except Student.DoesNotExist:
+            return Response(
+                    {'message': 'You are not authorized to view this page'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                    )
+        except TypeError as e:
+            print(e)
+            return Response(
+                    {'message': 'You are not authorized to view this page, try logging in'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                    )
+    return wrap
+
 
 
 @api_view(['GET'])
@@ -21,7 +53,7 @@ def home(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@student_required
 def registered_events(request):
     student = Student.objects.get(user=request.user)
     events = student.events.all()
@@ -30,7 +62,7 @@ def registered_events(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@student_required
 def register_event(request, id):
     student = Student.objects.get(user=request.user)
     data = request.data
@@ -69,10 +101,33 @@ def register_event(request, id):
         event_application = StudentEventApplication.objects.create(
                 student=student,
                 event=event,
-                atrifacts=data['artifacts'],
-                custom_data=data['custom_data']
+                artifacts=data.get('artifacts', None),
+                custom_data=data.get('custom_data', None),
                 )
         return Response({'message': 'Event registered'}, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@student_required
+def get_student_profile(request):
+    try:
+        student = Student.objects.get(user=request.user)
+    except Student.DoesNotExist:
+        return Response({'message': 'Student does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    serializer = StudentSerializer(student)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+@api_view(['PUT'])
+@student_required
+def update_student_profile(request):
+    try:
+        student = Student.objects.get(user=request.user)
+    except Student.DoesNotExist:
+        return Response({'message': 'Student does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    data = request.data
+    handle = data.get('handle', None)
+    if handle:
+        student.handle = handle
+        student.save()
+    return Response({'message': 'Profile updated'}, status=status.HTTP_200_OK)

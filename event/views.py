@@ -45,7 +45,8 @@ def event_head_required(view_func):
                     {'message': 'You are not authorized to view this page'},
                     status=status.HTTP_401_UNAUTHORIZED
                     )
-        except TypeError:
+        except TypeError as e:
+            print(e)
             return Response(
                     {'message': 'You are not authorized to view this page, try logging in'},
                     status=status.HTTP_401_UNAUTHORIZED
@@ -58,12 +59,12 @@ def event_head_required(view_func):
 def create_event(request):
     data = request.data
     print(data)
-    judges = data.pop('judges', None)
-    speakers = data.pop('speakers', None)
-    mentors = data.pop('mentors', None)
-    sponsors = data.pop('sponsors', None)
-    team = data.pop('team', None)
-    pictures = data.pop('pictures', None)
+    judges = data.pop('judges', [])
+    speakers = data.pop('speakers', [])
+    mentors = data.pop('mentors', [])
+    sponsors = data.pop('sponsors', [])
+    team = data.pop('team', [])
+    pictures = data.pop('pictures', [])
     data["registration_start_date"] = datetime.fromisoformat(data["registration_start_date"])
     data["registration_end_date"] = datetime.fromisoformat(data["registration_end_date"])
     data["date"] = datetime.fromisoformat(data["date"])
@@ -186,12 +187,12 @@ def update_event(request, id):
         return Response({"message": "you are not authorized to update this event"}, status=status.HTTP_401_UNAUTHORIZED)
     data = request.data
 
-    judges = data.pop('judges', None)
-    speakers = data.pop('speakers', None)
-    mentors = data.pop('mentors', None)
-    sponsors = data.pop('sponsors', None)
-    team = data.pop('team', None)
-    pictures = data.pop('pictures', None)
+    judges = data.pop('judges', [])
+    speakers = data.pop('speakers', [])
+    mentors = data.pop('mentors', [])
+    sponsors = data.pop('sponsors', [])
+    team = data.pop('team', [])
+    pictures = data.pop('pictures', [])
     data["registration_start_date"] = datetime.fromisoformat(data["registration_start_date"])
     data["registration_end_date"] = datetime.fromisoformat(data["registration_end_date"])
     data["date"] = datetime.fromisoformat(data["date"])
