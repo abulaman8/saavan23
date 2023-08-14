@@ -54,7 +54,14 @@ class EventSerializer(ModelSerializer):
         fields = '__all__'
 
 
-
+class SimpleEventSerializer(ModelSerializer):
+    class Meta:
+        model = Event
+        fields = [
+                'id', 'name', 'category', 'date',
+                'location', 'registration_start_date', 'registration_end_date',
+                'date', 'website_link'
+                ]
 
 
 

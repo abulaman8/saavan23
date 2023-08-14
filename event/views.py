@@ -10,7 +10,8 @@ from organizer.models import EventHead, OrganizingTeam, Organizer
 from organizer.serializers import EventHeadSerializer, OrganizerSerializer, OrganizingTeamSerializer
 from .serializers import (
         EventSerializer,
-        CategorySerializer
+        CategorySerializer,
+        SimpleEventSerializer
 
         )
 from .models import (
@@ -163,7 +164,7 @@ def create_event(request):
 @api_view(['GET'])
 def get_events(request):
     events = Event.objects.all()
-    serializer = EventSerializer(events, many=True)
+    serializer = SimpleEventSerializer(events, many=True)
     return Response(serializer.data)
 
 

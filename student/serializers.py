@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Student, StudentTeam, StudentEventApplication, StudentTeamEventApplictaion
-from event.serializers import EventSerializer
+from event.serializers import EventSerializer, SimpleEventSerializer
 from django.contrib.auth.models import User
 
 
@@ -11,7 +11,7 @@ class UserSerializer(ModelSerializer):
 
 
 class StudentSerializer(ModelSerializer):
-    events = EventSerializer(many=True)
+    events = SimpleEventSerializer(many=True)
     user = UserSerializer()
 
     class Meta:
@@ -21,7 +21,7 @@ class StudentSerializer(ModelSerializer):
 
 class StudentTeamSerializer(ModelSerializer):
     members = StudentSerializer(many=True)
-    event = EventSerializer()
+    event = SimpleEventSerializer()
 
     class Meta:
         model = StudentTeam
@@ -30,7 +30,7 @@ class StudentTeamSerializer(ModelSerializer):
 
 class StudentEventApplicationSerializer(ModelSerializer):
     student = StudentSerializer()
-    event = EventSerializer()
+    event = SimpleEventSerializer()
 
     class Meta:
         model = StudentEventApplication
@@ -39,7 +39,7 @@ class StudentEventApplicationSerializer(ModelSerializer):
 
 class StudentTeamEventApplictaionSerializer(ModelSerializer):
     team = StudentTeamSerializer()
-    event = EventSerializer()
+    event = SimpleEventSerializer()
 
     class Meta:
         model = StudentTeamEventApplictaion
