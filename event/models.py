@@ -63,6 +63,7 @@ class Event(models.Model):
     date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=360, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    header_image = models.ImageField(upload_to='events', null=True, blank=True)
     team = models.ForeignKey(OrganizingTeam, on_delete=models.CASCADE, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     fee = models.IntegerField(default=0)
