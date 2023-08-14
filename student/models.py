@@ -11,7 +11,7 @@ class Student(models.Model):
     handle = models.CharField(max_length=200)
     date_of_birth = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
-    profile_picture = models.URLField(max_length=600, null=True, blank=True)
+    profile_picture = models.URLField(null=True, blank=True)
     events = models.ManyToManyField(Event, related_name="participants", blank=True)
     
     def __str__(self):
@@ -22,7 +22,7 @@ class StudentEventApplication(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     application_date = models.DateTimeField(auto_now_add=True)
-    artifacts = models.URLField(max_length=600, blank=True, null=True)
+    artifacts = models.URLField(blank=True, null=True)
     custom_data = models.JSONField(blank=True, null=True)
 
     def __str__(self):
@@ -42,7 +42,7 @@ class StudentTeamEventApplictaion(models.Model):
     team = models.ForeignKey(StudentTeam, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     application_date = models.DateTimeField(auto_now_add=True)
-    artifacts = models.URLField(max_length=600, blank=True, null=True)
+    artifacts = models.URLField(blank=True, null=True)
     custom_data = models.JSONField(blank=True, null=True)
 
     def __str__(self):

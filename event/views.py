@@ -346,4 +346,17 @@ def setup_template(request, id):
     return Response({"message": "template added successfully"}, status=status.HTTP_200_OK)
     
 
-
+@api_view(['PUT'])
+@event_head_required
+def add_header_image(request, id):
+    try:
+        event = Event.objects.get(id=id)
+    except Event.DoesNotExist:
+        return Response({"message": "event does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    if event.team.event_head.user != request.user:
+        return Response({"message": "you are not allowed to perform this action"}, status=status.HTTP_403_FORBIDDEN)
+    data = request.data
+    header_image = data.get('header_image')
+    event.header_image = header_image
+    event.save()
+    return Response({"message": "header image added successfully"}, status=status.HTTP_200_OK)
