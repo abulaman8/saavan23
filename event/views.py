@@ -1,4 +1,5 @@
 from oauth2_provider.models import AccessToken, RefreshToken
+import json
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from datetime import datetime
 from rest_framework import status
@@ -325,5 +326,23 @@ def add_winners(request):
                     )
 
         return Response({"message": "winners added successfully"}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PUT'])
+@event_head_required
+def setup_template(request, id):
+    try:
+        event = Event.objects.get(id=id)
+    except Event.DoesNotExist:
+        return Response({"message": "event does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    if event.team.event_head.user != request.user:
+        return Response({"message": "you are not allowed to perform this action"}, status=status.HTTP_403_FORBIDDEN)
+    data = request.data
+    template = data.get('template')
+    json_template = json.dumps(template)
+    event.template = json_template
+    event.save()
+    return Response({"message": "template added successfully"}, status=status.HTTP_200_OK)
+    
 
 
