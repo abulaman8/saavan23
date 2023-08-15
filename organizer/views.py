@@ -24,7 +24,7 @@ def get_event_head_event(request):
     except OrganizingTeam.DoesNotExist:
         return Response({'error': 'You are not an event head'}, status=status.HTTP_403_FORBIDDEN)
     try:
-        event = Event.objects.get(event_head=event_head)
+        event = Event.objects.get(team=team)
     except Event.DoesNotExist:
         return Response({'error': 'Event does not exist'}, status=status.HTTP_404_NOT_FOUND)
     return Response(EventSerializer(event).data, status=status.HTTP_200_OK)

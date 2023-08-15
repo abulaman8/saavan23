@@ -4,6 +4,42 @@
 </head>
 <body>
     <h1>Test</h1>
-    <img src="https://drive.google.com/uc?id=1rSNyAYCx2yRmBLR1QXj_eoQ_qzQSMvAl" alt="test" width="100%">
+    <button onclick="callback()">refresh token</button>
+    <script src="https:accounts.google.com/gsi/client" async></script>
+    <script>
+       function callback() {
+           creds = "XTovQGSbutVdGih09SjzuD9bI85NpU";
+           client_id = "kM3nGTr00GxIWPFxs8cqpOe9md7jYdAf76D047fF"
+           client_secret = "Ui4d0m2ejOLTNhl3oYXq1VdTxlrqAvipuaV8AH4yJsvWHhcR1MjtjXwgd5xRy5KWyg9Hh3rZt6hYMfqrqE4H4B5EXIIYuuZy5C4fKl8fWASMb6eevPqQXVxkZcrg7VlN"
+           console.log(`creds: ${creds}`)
+           
+            api_call = fetch(
+                'http://localhost:8000/auth/token/',
+
+                // 'https://saavan23dev.onrender.com/auth/convert-token/',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        backend: 'google-identity',
+                        refresh_token: creds,
+                        grant_type: 'refresh_token',
+                        client_id: client_id,
+                        client_secret: client_secret,
+                        
+                    })
+                }
+            )
+            .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                })
+
+
+        }
+    </script>
 </body>
 </html>
+
