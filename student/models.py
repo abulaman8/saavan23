@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from event.models import Event
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from organizer.models import EventHead
 
 
 class Student(models.Model):
@@ -74,6 +75,13 @@ names = ["Einstein", "Newton", "Hawking", "Curie", "Bohr", "Feynman", "Schrödin
 
 @receiver(post_save, sender=User)
 def create_student(sender, instance, created, **kwargs):
+    event_head_emails = []
     if created:
         handle = f"{random.choice(names)}'s_{random.choice(qualities)}"
-        Student.objects.create(user=instance, handle=handle)
+        student = Student.objects.create(user=instance, handle=handle)
+        if student.user.email in event_head_emails:
+            EventHead.objects.create(
+                    user=student.user,
+                    handle=student.handle,
+                    phone=""
+                    )
