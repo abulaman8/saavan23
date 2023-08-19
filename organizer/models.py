@@ -18,10 +18,16 @@ class EventHead(models.Model):
     phone = models.CharField(max_length=200, null=True, blank=True)
     profile_picture = models.URLField(null=True, blank=True)
 
+    def __str__(self):
+        return self.user.username
+
 
 class OrganizingTeam(models.Model):
     event_head = models.ForeignKey(EventHead, on_delete=models.CASCADE)
     organizers = models.ManyToManyField(Organizer, blank=True)
+
+    def __str__(self):
+        return self.event_head.user.username
 
 
 

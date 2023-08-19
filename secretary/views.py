@@ -103,6 +103,7 @@ def approve_event(request, id):
         messages.error(request, 'Event not found')
         return redirect('/secretary')
 
+
 @secretary_required
 def disapprove_event(request, id):
     try:

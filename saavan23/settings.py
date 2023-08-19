@@ -69,6 +69,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'saavan23.urls'
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'http://localhost:8080',
+        ]
 
 TEMPLATES = [
     {

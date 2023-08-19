@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
 {% block title %} Home {% endblock %}
 {% block content %}
-    <h1>Home</h1>
+    <div class="flex-d justify-content-between"
+        style="margin-top:0;height:100%">
+    <h1 class="my-3">Events</h1>
+    <div class="d-flex flex-row flex-wrap">
+        {% for event in events %}
+            <div class="card mx-2 my-2" style="width: 18rem;">
+                <img class="card-img-top" src="{{ event.header_image }}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.name  }}</h5>
+                    <a href="/secretary/events/{{ event.id  }}" class="btn btn-success">View</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
 {% endblock %}
 
 

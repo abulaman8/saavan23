@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
 {% block title %} Event Details {% endblock %}
 {% block content %}
+<div class="d-flex" style="margin-top:0; height:100%;">
+    {{ event.team.event_head.user }}
+    {% for judge in event.judges.all %}
+    {{ judge  }}
+    {% endfor %}
+</div>
 {% endblock %}
