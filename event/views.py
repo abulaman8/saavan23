@@ -75,6 +75,8 @@ def create_event(request):
                 {'message': 'You are not authorized to view this page'},
                 status=status.HTTP_401_UNAUTHORIZED
                 )
+    except Event.DoesNotExist:
+        pass
 
     data = request.data
     print(data)
