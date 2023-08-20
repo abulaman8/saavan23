@@ -59,6 +59,23 @@ def event_head_required(view_func):
 @api_view(['POST'])
 @event_head_required
 def create_event(request):
+    try:
+        event_head = EventHead.objects.get(user=request.user)
+        team = OrganizingTeam.objects.get(event_head=event_head)
+        event = Event.objects.get(team=team)
+        if event:
+            event.delete()
+    except EventHead.DoesNotExist:
+        return Response(
+                {'message': 'You are not authorized to view this page'},
+                status=status.HTTP_401_UNAUTHORIZED
+                )
+    except OrganizingTeam.DoesNotExist:
+        return Response(
+                {'message': 'You are not authorized to view this page'},
+                status=status.HTTP_401_UNAUTHORIZED
+                )
+
     data = request.data
     print(data)
     judges = data.pop('judges', [])
@@ -136,6 +153,9 @@ def create_event(request):
                     status=status.HTTP_400_BAD_REQUEST
                     )
     try:
+        check = OrganizingTeam.objects.get(event_head=event_head)
+        if check:
+            check.delete()
         organizing_team = OrganizingTeam.objects.create(event_head=event_head)
     except Exception as e:
         print(e)
