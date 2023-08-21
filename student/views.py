@@ -1,3 +1,4 @@
+from django.db.models import Q
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -13,7 +14,7 @@ from .models import (
         )
 
 from event.serializers import EventSerializer
-from .serializers import StudentSerializer
+from .serializers import StudentEventApplicationSerializer, StudentSerializer, StudentTeamEventApplictaionSerializer
 
 
 def student_required(view_func):
@@ -131,3 +132,40 @@ def update_student_profile(request):
         student.handle = handle
         student.save()
     return Response({'message': 'Profile updated'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@student_required
+def get_event_appliaction_data(request, id):
+    student = Student.objects.get(user=request.user)
+    try:
+        event = Event.objects.get(id=id)
+    except Event.DoesNotExist:
+        return Response(
+                {
+                    'message': 'Event Does not exist'
+                    },
+                status=status.HTTP_404_NOT_FOUND
+                )
+    if event in student.events.all():
+        if event.is_team_event:
+            team = StudentTeam.objects.filter(event=event,
+                                              members__id=student.id).first()
+            application = StudentTeamEventApplictaion.objects.filter(event=event, team=team).first()
+            data = StudentTeamEventApplictaionSerializer(application).data
+            
+            return Response(
+                    data, status=status.HTTP_200_OK
+                    )
+        application = StudentEventApplication.objects.filter(Q(student=student) & Q(event=event)).first()
+        data = StudentEventApplicationSerializer(application).data
+        return Response(
+                data, status=status.HTTP_200_OK
+                )
+    else:
+        return Response(
+                {
+                    'message': 'You are not registered to this event'
+                    },
+                status=status.HTTP_401_UNAUTHORIZED
+                )

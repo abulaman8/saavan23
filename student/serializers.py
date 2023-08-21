@@ -19,6 +19,13 @@ class StudentSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class SimpleStudentSerializer(ModelSerializer):
+    
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+
 class StudentTeamSerializer(ModelSerializer):
     members = StudentSerializer(many=True)
     event = SimpleEventSerializer()
@@ -28,8 +35,15 @@ class StudentTeamSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class SimpleStudentTeamSerializer(ModelSerializer):
+
+    class Meta:
+        model = StudentTeam
+        fields = '__all__'
+
+
 class StudentEventApplicationSerializer(ModelSerializer):
-    student = StudentSerializer()
+    student = SimpleStudentSerializer()
     event = SimpleEventSerializer()
 
     class Meta:
@@ -38,7 +52,7 @@ class StudentEventApplicationSerializer(ModelSerializer):
 
 
 class StudentTeamEventApplictaionSerializer(ModelSerializer):
-    team = StudentTeamSerializer()
+    team = SimpleStudentTeamSerializer()
     event = SimpleEventSerializer()
 
     class Meta:

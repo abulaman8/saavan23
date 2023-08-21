@@ -60,7 +60,7 @@ class SimpleEventSerializer(ModelSerializer):
         fields = [
                 'id', 'name', 'category', 'date',
                 'location', 'registration_start_date', 'registration_end_date',
-                'date', 'website_link', 'header_image'
+                'date', 'website_links', 'header_image'
                 ]
 
 

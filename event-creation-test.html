@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Event creation</title>
+</head>
+<body>
+<button onclick="PostEvent()">Create Event</button>
+
+<script>
+	function PostEvent(){
+		const data = {
+			    "name": "Cryptic hunt",
+			    "description": "# About the Event\n\nIt's a cool event. Do participate.\n\n# Rules and Guidelines\n\n- Some rules are meant to be broken, but don't break this one, you will be terminated",
+			    "location": "Online",
+			    "max_participants": "100",
+			    "is_team_event": true,
+			    "header_image": "",
+			    "meet_link": "",
+			    "fb_link": "",
+			    "ig_link": "",
+			    "yt_link": "",
+			    "twitter_link": "",
+			    "website_links": "https://cryptichunt.com",
+			    "misc_links": "",
+			    "registration_start_date": "2023-08-23T00:00:00.000Z",
+			    "registration_end_date": "2023-08-24T00:00:00.000Z",
+			    "date": "2023-08-24T00:00:00.000Z",
+			    "category": 1,
+			    "team": [
+			        {
+			            "name": "Yuvraj Sharma",
+			            "email": "21f3000180@ds.study.iitm.ac.in",
+			            "phone": "9876543210",
+			            "role": "Thala"
+			        }
+			    ],
+			    "judges": [
+			        {
+			            "name": "",
+			            "bio": "",
+			            "email": "",
+			            "image": ""
+			        }
+			    ],
+			    "sponsors": [
+			        {
+			            "name": "",
+			            "logo": "",
+			            "website": "",
+			            "type": ""
+			        }
+			    ]
+			}
+
+			fetch(
+				'http://127.0.0.1:8000/events/create-event/',
+				{
+					headers: {
+					      "Content-Type": "application/json",
+					      "Authorization": "Bearer qnv0mIchxDBnPBnKexcJMu1OK46KD5"
+					    },
+					method: 'POST',
+
+					body: JSON.stringify(data)
+				}
+
+				).
+			then(res => res.json())
+			.then(data => console.log(data))
+
+
+
+
+	}
+</script>
+</body>
+</html>
