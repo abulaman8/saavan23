@@ -8,5 +8,6 @@ urlpatterns = [
         path('event/participants/', views.get_event_participants,
              name='get_event_participants'),
         path('event/participant/<int:id>/', views.get_participant_data,
-             name='get_participant_data')
+             name='get_participant_data'),
+        path('event/all_participants/', views.get_all_participants_data, name='get_all_participants_data'),
         ]

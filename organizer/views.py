@@ -94,3 +94,24 @@ def get_participant_data(request, id):
         data = StudentEventApplicationSerializer(application).data
         return Response(data, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+@event_head_required
+def get_all_participants_data(request):
+    event_head = EventHead.objects.get(user=request.user)
+    try:
+        team = OrganizingTeam.objects.get(event_head=event_head)
+    except OrganizingTeam.DoesNotExist:
+        return Response({'error': 'You are not an event head'}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        event = Event.objects.get(team=team)
+    except Event.DoesNotExist:
+        return Response({'error': 'Event does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if event.is_team_event:
+        applications = StudentTeamEventApplictaion.objects.filter(event=event).all()
+        data = StudentTeamEventApplictaionSerializer(applications, many=True).data
+        return Response(data, status=status.HTTP_200_OK)
+    else:
+        applications = StudentEventApplication.objects.filter(event=event).all()
+        data = StudentEventApplicationSerializer(applications, many=True).data
+        return Response(data, status=status.HTTP_200_OK)
