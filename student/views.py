@@ -149,19 +149,21 @@ def get_event_appliaction_data(request, id):
                 )
     if event in student.events.all():
         if event.is_team_event:
-            team = StudentTeam.objects.filter(event=event,
-                                              members__id=student.id).first()
+            # team = StudentTeam.objects.filter(event=event,
+            #                                   members__id=student.id).first()
+            team = student.teams.filter(event=event).first()
             application = StudentTeamEventApplictaion.objects.filter(event=event, team=team).first()
             data = StudentTeamEventApplictaionSerializer(application).data
             
             return Response(
                     data, status=status.HTTP_200_OK
                     )
-        application = StudentEventApplication.objects.filter(Q(student=student) & Q(event=event)).first()
-        data = StudentEventApplicationSerializer(application).data
-        return Response(
-                data, status=status.HTTP_200_OK
-                )
+        else:
+            application = StudentEventApplication.objects.filter(Q(student=student) & Q(event=event)).first()
+            data = StudentEventApplicationSerializer(application).data
+            return Response(
+                    data, status=status.HTTP_200_OK
+                    )
     else:
         return Response(
                 {
