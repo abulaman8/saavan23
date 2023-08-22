@@ -87,7 +87,7 @@ def register_event(request, id):
             team_members.append(student)
         for member in team_members:
             if event in member.events.all():
-                return Response({'message': f'User {member.email} has already registered'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': f'User {member.user.email} has already registered'}, status=status.HTTP_400_BAD_REQUEST)
             member.events.add(event)
         student_team = StudentTeam.objects.create(
                 name=data['team_name'],
