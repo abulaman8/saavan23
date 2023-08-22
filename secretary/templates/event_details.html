@@ -2,6 +2,23 @@
 {% block title %} Event Details {% endblock %}
 {% block content %}
 <div class="d-flex" style="margin-top:0; height:100%;">
+    <h1>{{ event.name }}</h1>
+    <b>Registration starts at:</b> {{ event.registration_start_date }}<br>
+    <b>Category:</b> {{ event.category.name }}<br>
+    <b>Registration ends at:</b> {{ event.registration_end_date }}<br>
+    <b>Event date:</b> {{ event.date }}<br>
+    <b>Location:</b> {{ event.location }}<br>
+    <b>Maximum number of participants:</b> {{ event.max_participants }}<br>
+    <b>Fee:</b> {{ event.fee }}<br>
+    <b>Instagram:</b> {{ event.ig_link }}<br>
+    <b>Facebook:</b> {{ event.fb_link }}<br>
+    <b>Twitter:</b> {{ event.twitter_link }}<br>
+    <b>Youtube:</b> {{ event.yt_link }}<br>
+    <b>Meet:</b> {{ event.meet_link }}<br>
+
+
+
+
     {{ event.team.event_head.user }}
     {% for judge in event.judges.all %}
     {{ judge  }}

@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.contrib.auth.models import User
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -77,9 +78,12 @@ def register_event(request, id):
         team_members = []
         for member in data['team_members']:
             try:
-                student = Student.objects.get(email=member)
+                user = User.objects.get(email=member)
+                student = Student.objects.get(user=user)
             except Student.DoesNotExist:
                 return Response({'message': 'Student does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            except User.DoesNotExist:
+                return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
             team_members.append(student)
         for member in team_members:
             if event in member.events.all():
