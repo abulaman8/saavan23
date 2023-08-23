@@ -66,15 +66,13 @@ def create_event(request):
         if event:
             event.delete()
     except EventHead.DoesNotExist:
+        print("third check failed")
         return Response(
                 {'message': 'You are not authorized to view this page'},
                 status=status.HTTP_401_UNAUTHORIZED
                 )
     except OrganizingTeam.DoesNotExist:
-        return Response(
-                {'message': 'You are not authorized to view this page'},
-                status=status.HTTP_401_UNAUTHORIZED
-                )
+        pass
     except Event.DoesNotExist:
         pass
 
@@ -155,7 +153,7 @@ def create_event(request):
                     status=status.HTTP_400_BAD_REQUEST
                     )
     try:
-        check = OrganizingTeam.objects.get(event_head=event_head)
+        check = OrganizingTeam.objects.filter(event_head=event_head).first()
         if check:
             check.delete()
         organizing_team = OrganizingTeam.objects.create(event_head=event_head)
@@ -200,6 +198,101 @@ def get_event(request, id):
     return Response(serializer.data)
 
 
+# @api_view(['PUT'])
+# @event_head_required
+# def update_event(request, id):
+#     try:
+#         event = Event.objects.get(id=id)
+#     except Event.DoesNotExist:
+#         return Response({"message": "event not found"}, status=status.HTTP_404_NOT_FOUND)
+#     if event.team.event_head.user != request.user:
+#         return Response({"message": "you are not authorized to update this event"}, status=status.HTTP_401_UNAUTHORIZED)
+#     data = request.data
+#     event_id = data.pop('id', None)
+#
+#     judges = data.pop('judges', [])
+#     speakers = data.pop('speakers', [])
+#     mentors = data.pop('mentors', [])
+#     sponsors = data.pop('sponsors', [])
+#     team = data.pop('team', [])
+#     pictures = data.pop('pictures', [])
+#     data["registration_start_date"] = datetime.fromisoformat(data["registration_start_date"])
+#     data["registration_end_date"] = datetime.fromisoformat(data["registration_end_date"])
+#     data["date"] = datetime.fromisoformat(data["date"])
+#     category = Category.objects.get(id=data["category"])
+#     data["category"] = category
+#     max_participants = data.pop('max_participants', None)
+#     data["max_participants"] = None if max_participants == "" else max_participants
+#
+#     event_head = EventHead.objects.get(user=request.user)
+#     judge_instances = []
+#     speaker_instances = []
+#     mentor_instances = []
+#     sponsor_instances = []
+#     organizer_instances = []
+#     picture_instances = []
+#     for judge in judges:
+#         id = judge.pop('id', None)
+#         judge_object = Judge.objects.get_or_create(**judge)[0]
+#         for key, value in judge.items():
+#             setattr(judge_object, key, value)
+#         judge_object.save()
+#         judge_instances.append(judge_object)
+#     for speaker in speakers:
+#         id = speaker.pop('id', None)
+#         speaker_object = Speaker.objects.get_or_create(**speaker)[0]
+#         for key, value in speaker.items():
+#             setattr(speaker_object, key, value)
+#         speaker_object.save()
+#         speaker_instances.append(speaker_object)
+#     for mentor in mentors:
+#         id = mentor.pop('id', None)
+#         mentor_object = Mentor.objects.get_or_create(**mentor)[0]
+#         for key, value in mentor.items():
+#             setattr(mentor_object, key, value)
+#         mentor_object.save()
+#         mentor_instances.append(mentor_object)
+#     for sponsor in sponsors:
+#         id = sponsor.pop('id', None)
+#         sponsor_object = Sponsor.objects.get_or_create(**sponsor)[0]
+#         for key, value in sponsor.items():
+#             setattr(sponsor_object, key, value)
+#         sponsor_object.save()
+#         sponsor_instances.append(sponsor_object)
+#     for picture in pictures:
+#         id = picture.pop('id', None)
+#         picture_object = EventPicture.objects.get_or_create(**picture)[0]
+#         for key, value in picture.items():
+#             setattr(picture_object, key, value)
+#         picture_object.save()
+#         picture_instances.append(picture_object)
+#     for organizer in team:
+#         id = organizer.pop('id', None)
+#         organizer_object = Organizer.objects.get_or_create(**organizer)[0]
+#         for key, value in organizer.items():
+#             setattr(organizer_object, key, value)
+#         organizer_object.save()
+#         organizer_instances.append(organizer_object)
+#
+#     organizing_team = OrganizingTeam.objects.get_or_create(event_head=event_head)[0]
+#     for organizer in OrganizingTeam.objects.all():
+#         organizer.delete()
+#
+#     organizing_team.organizers.set(organizer_instances)
+#     data['team'] = organizing_team
+#     for key, value in data.items():
+#         setattr(event, key, value)
+#     event.save()
+#
+#     event.judges.set(judge_instances)
+#     event.speakers.set(speaker_instances)
+#     event.mentors.set(mentor_instances)
+#     event.sponsors.set(sponsor_instances)
+#     event.pictures.set(picture_instances)
+#     return Response({"message": "event created successfully!!!"}, status=status.HTTP_201_CREATED)
+#
+#
+
 @api_view(['PUT'])
 @event_head_required
 def update_event(request, id):
@@ -210,6 +303,7 @@ def update_event(request, id):
     if event.team.event_head.user != request.user:
         return Response({"message": "you are not authorized to update this event"}, status=status.HTTP_401_UNAUTHORIZED)
     data = request.data
+    event_id = data.pop('id', None)
 
     judges = data.pop('judges', [])
     speakers = data.pop('speakers', [])
@@ -222,8 +316,25 @@ def update_event(request, id):
     data["date"] = datetime.fromisoformat(data["date"])
     category = Category.objects.get(id=data["category"])
     data["category"] = category
+    max_participants = data.pop('max_participants', None)
+    data["max_participants"] = None if max_participants == "" else max_participants
 
     event_head = EventHead.objects.get(user=request.user)
+    for judge in event.judges.all():
+        judge.delete()
+    event.judges.clear()
+    for speaker in event.speakers.all():
+        speaker.delete()
+    event.speakers.clear()
+    for mentor in event.mentors.all():
+        mentor.delete()
+    event.mentors.clear()
+    for sponsor in event.sponsors.all():
+        sponsor.delete()
+    event.sponsors.clear()
+    for member in event.team.organizers.all():
+        member.delete()
+    event.team.organizers.clear()
     judge_instances = []
     speaker_instances = []
     mentor_instances = []
@@ -231,55 +342,48 @@ def update_event(request, id):
     organizer_instances = []
     picture_instances = []
     for judge in judges:
-        judge_object = judge.objects.get_or_create(**judge)[0]
-        for key, value in judge.items():
-            setattr(judge_object, key, value)
-        judge_object.save()
+        id = judge.pop('id', None)
+        judge_object = Judge.objects.create(**judge)
         judge_instances.append(judge_object)
     for speaker in speakers:
-        speaker_object = Speaker.objects.get_or_create(**speaker)[0]
-        for key, value in speaker.items():
-            setattr(speaker_object, key, value)
-        speaker_object.save()
+        id = speaker.pop('id', None)
+        speaker_object = Speaker.objects.create(**speaker)
         speaker_instances.append(speaker_object)
     for mentor in mentors:
-        mentor_object = Mentor.objects.get_or_create(**mentor)[0]
-        for key, value in mentor.items():
-            setattr(mentor_object, key, value)
-        mentor_object.save()
+        id = mentor.pop('id', None)
+        mentor_object = Mentor.objects.create(**mentor)
         mentor_instances.append(mentor_object)
     for sponsor in sponsors:
-        sponsor_object = Sponsor.objects.get_or_create(**sponsor)[0]
-        for key, value in sponsor.items():
-            setattr(sponsor_object, key, value)
-        sponsor_object.save()
+        id = sponsor.pop('id', None)
+        sponsor_object = Sponsor.objects.create(**sponsor)
         sponsor_instances.append(sponsor_object)
     for picture in pictures:
-        picture_object = EventPicture.objects.get_or_create(**picture)[0]
-        for key, value in picture.items():
-            setattr(picture_object, key, value)
-        picture_object.save()
+        id = picture.pop('id', None)
+        picture_object = EventPicture.objects.create(**picture)
         picture_instances.append(picture_object)
     for organizer in team:
-
-        organizer_object = Organizer.objects.get_or_create(**organizer)[0]
-        for key, value in organizer.items():
-            setattr(organizer_object, key, value)
-        organizer_object.save()
+        id = organizer.pop('id', None)
+        organizer_object = Organizer.objects.create(**organizer)
         organizer_instances.append(organizer_object)
 
     organizing_team = OrganizingTeam.objects.get_or_create(event_head=event_head)[0]
+    for organizer in organizing_team.organizers.all():
+        organizer.delete()
+    organizing_team.organizers.clear()
+
     organizing_team.organizers.set(organizer_instances)
     data['team'] = organizing_team
     for key, value in data.items():
         setattr(event, key, value)
     event.save()
+
     event.judges.set(judge_instances)
     event.speakers.set(speaker_instances)
     event.mentors.set(mentor_instances)
     event.sponsors.set(sponsor_instances)
     event.pictures.set(picture_instances)
     return Response({"message": "event created successfully!!!"}, status=status.HTTP_201_CREATED)
+
 
 
 @api_view(['DELETE'])
