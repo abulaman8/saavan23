@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'organizer',
     'student',
     'secretary',
+    'announcement',
 ]
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "926224938000-9vml4i2abo63vvq09skmg8mil13ngtpg.apps.googleusercontent.com"
