@@ -47,7 +47,6 @@ def student_required(view_func):
     return wrap
 
 
-
 @api_view(['GET'])
 def home(request):
     content = {'message': 'Hello, World!'}
@@ -176,10 +175,11 @@ def get_event_appliaction_data(request, id):
                 status=status.HTTP_401_UNAUTHORIZED
                 )
 
-
+#
 # @api_view(['PUT'])
 # @student_required
 # def update_event_application(request, id):
+#     data = request.data
 #     student = Student.objects.get(user=request.user)
 #     try:
 #         event = Event.objects.get(id=id)
@@ -192,4 +192,38 @@ def get_event_appliaction_data(request, id):
 #                 )
 #     if event in student.events.all():
 #         if event.is_team_event:
+#             team = student.teams.filter(event=event).first()
+#             if team:
+#                 for member in team.members:
+#                     member.events.remove(event)
+#             team.members.clear()
 #
+#             application = StudentTeamEventApplictaion.objects.filter(event=event, team=team).first()
+#
+#             team_members = []
+#             for member in data['team_members']:
+#                 try:
+#                     user = User.objects.get(email=member)
+#                     student = Student.objects.get(user=user)
+#                 except Student.DoesNotExist:
+#                     return Response({'message': 'Student does not exist'}, status=status.HTTP_404_NOT_FOUND)
+#                 except User.DoesNotExist:
+#                     return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+#                 team_members.append(student)
+#             for member in team_members:
+#                 member.events.add(event)
+#             team.members.set(team_members)
+#             application.custom_data = data.get('custom_data', {})
+#             application.save()
+#             return Response({'message': 'Team updated successfully'}, status=status.HTTP_200_OK)
+#         else:
+#             student.events.add(event)
+#             application = StudentEventApplication.objects.filter(event=event, student=student).first()
+#             application.custom_data = data.get('custom_data', {})
+#             application.save()
+#             return Response({'message': 'Application updated successfully'}, status=status.HTTP_200_OK)
+#
+
+
+
+

@@ -200,6 +200,16 @@ def get_event(request, id):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+def get_events_by_category(request, category):
+    category = Category.objects.filter(name__iexact=category).first()
+    if not category:
+        return Response({"message": "category not found"}, status=status.HTTP_404_NOT_FOUND)
+    events = Event.objects.filter(category=category, is_approved=True).all()
+    serializer = SimpleEventSerializer(events, many=True)
+    return Response(serializer.data)
+
+
 # @api_view(['PUT'])
 # @event_head_required
 # def update_event(request, id):
