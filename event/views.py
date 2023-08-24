@@ -183,7 +183,7 @@ def create_event(request):
 
 @api_view(['GET'])
 def get_events(request):
-    events = Event.objects.all()
+    events = Event.objects.filter(is_approved=True).all()
     serializer = SimpleEventSerializer(events, many=True)
     return Response(serializer.data)
 
@@ -194,6 +194,8 @@ def get_event(request, id):
         event = Event.objects.get(id=id)
     except Event.DoesNotExist:
         return Response({"message": "event not found"}, status=status.HTTP_404_NOT_FOUND)
+    if not event.is_approved:
+        return Response({"message": "event not approved"}, status=status.HTTP_404_NOT_FOUND)
     serializer = EventSerializer(event)
     return Response(serializer.data)
 
