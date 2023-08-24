@@ -4,6 +4,7 @@ from django.db import models
 class Announcement(models.Model):
     title = models.CharField(max_length=300)
     description = models.TextField()
+    image = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

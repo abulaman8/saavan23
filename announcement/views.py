@@ -13,6 +13,7 @@ def get_announcements(request):
             'id': announcement.id,
             'title': announcement.title,
             'description': announcement.description,
+            'image': announcement.image if announcement.image else '',
             'created_at': announcement.created_at,
             'updated_at': announcement.updated_at
         } for announcement in announcements],
@@ -29,6 +30,7 @@ def get_announcement(request, id):
                 'id': announcement.id,
                 'title': announcement.title,
                 'description': announcement.description,
+                'image': announcement.image if announcement.image else '',
                 'created_at': announcement.created_at,
                 'updated_at': announcement.updated_at
             },

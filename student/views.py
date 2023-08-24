@@ -175,3 +175,21 @@ def get_event_appliaction_data(request, id):
                     },
                 status=status.HTTP_401_UNAUTHORIZED
                 )
+
+
+# @api_view(['PUT'])
+# @student_required
+# def update_event_application(request, id):
+#     student = Student.objects.get(user=request.user)
+#     try:
+#         event = Event.objects.get(id=id)
+#     except Event.DoesNotExist:
+#         return Response(
+#                 {
+#                     'message': 'Event Does not exist'
+#                     },
+#                 status=status.HTTP_404_NOT_FOUND
+#                 )
+#     if event in student.events.all():
+#         if event.is_team_event:
+#
