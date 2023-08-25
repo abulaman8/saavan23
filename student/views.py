@@ -1,4 +1,7 @@
 from django.db.models import Q
+from django.conf import settings
+from django.template import Template, Context
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework.response import Response
@@ -16,6 +19,48 @@ from .models import (
 
 from event.serializers import EventSerializer
 from .serializers import StudentEventApplicationSerializer, StudentSerializer, StudentTeamEventApplictaionSerializer
+
+
+solo_reg_template = '''
+<html>
+    <head>
+        <title>Event Registration</title>
+    </head>
+    <body>
+        <h1>Event Registration Confirmation</h1>
+        <p>Hi {{ name }},</p>
+        <p>You have successfully registered for the event {{ event_name }}.</p>
+        <p>You can find further details on your Profile page at the Saavan Dashboard.<p>
+        <p>Regards,<br>
+        Saavan Team</p>
+        
+       
+    </body>
+
+</html>
+'''
+
+
+team_reg_template = '''
+<html>
+    <head>
+        <title>Event Registration</title>
+    </head>
+    <body>
+        <h1>Event Registration Confirmation</h1>
+        <p>Hi {{ name }},</p>
+        <p>You have successfully registered for the event {{ event_name }} under
+        the {{ team_name }} team.</p>
+        <p>You can find further details on your Profile page at the Saavan Dashboard.<p>
+        <p>Regards,<br>
+        Saavan Team</p>
+        
+       
+    </body>
+
+</html>
+'''
+
 
 
 def student_required(view_func):
@@ -99,6 +144,26 @@ def register_event(request, id):
                 custom_data=data['custom_data'],
                 artifacts=data['artifacts'],
                 )
+        for student in student_team.members.all():
+
+            template = Template(team_reg_template)
+            context = Context(
+                    {
+                        'name': student.user.first_name,
+                        'event_name': event.name,
+                        'team_name': student_team.name,
+
+                        }
+                    )
+            rendered = template.render(context)
+            subject = 'Registration for ' + event.name
+            from_email = settings.EMAIL_HOST_USER
+            to_email = [student.user.email]
+            msg = EmailMultiAlternatives(subject, rendered, from_email, to_email)
+            msg.attach_alternative(rendered, "text/html")
+            msg.send()
+
+
         return Response({'message': 'Successfully registered'}, status=status.HTTP_201_CREATED)
     else:
         student.events.add(event)
@@ -108,6 +173,22 @@ def register_event(request, id):
                 artifacts=data.get('artifacts', None),
                 custom_data=data.get('custom_data', None),
                 )
+        template = Template(solo_reg_template)
+        context = Context(
+                {
+                    'name': student.user.first_name,
+                    'event_name': event.name,
+
+                    }
+                )
+        rendered = template.render(context)
+        subject = 'Registration for ' + event.name
+        from_email = settings.EMAIL_HOST_USER
+        to_email = [student.user.email]
+        msg = EmailMultiAlternatives(subject, rendered, from_email, to_email)
+        msg.attach_alternative(rendered, "text/html")
+        msg.send()
+
         return Response({'message': 'Event registered'}, status=status.HTTP_200_OK)
 
 
