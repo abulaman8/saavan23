@@ -192,6 +192,41 @@ def register_event(request, id):
         return Response({'message': 'Event registered'}, status=status.HTTP_200_OK)
 
 
+@api_view(['DELETE'])
+@student_required
+def delete_registration(request, id):
+    student = Student.objects.get(user=request.user)
+    try:
+        event = Event.objects.get(id=id)
+    except Event.DoesNotExist:
+        return Response({'message': 'Event does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if event.is_team_event:
+        if event in student.events.all():
+            team = student.teams.filter(event=event).first()
+            if team:
+                for member in team.members.all():
+                    member.events.remove(event)
+                    member.save()
+                team.delete()
+                return Response({'message': 'Event unregistered'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Team does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'message': 'You are not registered to this Event.'}, status=status.HTTP_404_NOT_FOUND)
+    else:
+        if event in student.events.all():
+            student.events.remove(event)
+            student.save()
+            application = StudentEventApplication.objects.filter(student=student, event=event).first()
+            if application:
+                application.delete()
+            else:
+                return Response({'message': 'Application does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'Event unregistered'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'You are not registered to this Event.'}, status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['GET'])
 @student_required
 def get_student_profile(request):
