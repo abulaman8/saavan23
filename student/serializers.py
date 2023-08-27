@@ -20,7 +20,8 @@ class StudentSerializer(ModelSerializer):
 
 
 class SimpleStudentSerializer(ModelSerializer):
-    
+    user = UserSerializer()
+
     class Meta:
         model = Student
         fields = '__all__'
