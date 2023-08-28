@@ -53,7 +53,7 @@ class StudentEventApplicationSerializer(ModelSerializer):
 
 
 class StudentTeamEventApplictaionSerializer(ModelSerializer):
-    team = SimpleStudentTeamSerializer()
+    team = StudentTeamSerializer()
     event = SimpleEventSerializer()
 
     class Meta:
