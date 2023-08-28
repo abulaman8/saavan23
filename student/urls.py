@@ -11,4 +11,5 @@ urlpatterns = [
     path('registered-events/<int:id>/', views.get_event_appliaction_data,
          name='get_event_appliaction_data_'),
     path('unregister/<int:id>/', views.delete_registration, name='unregister'),
+    path('update-registration/<int:id>/', views.update_event_application, name='update-registration'),
         ]
