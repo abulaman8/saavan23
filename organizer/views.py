@@ -1,4 +1,4 @@
-from event.models import Event, OrganizingTeam
+from event.models import Event, OrganizingTeam, Category
 from event.views import event_head_required
 from event.serializers import SimpleEventSerializer, EventSerializer
 from student.serializers import (
@@ -123,7 +123,8 @@ def get_core_application_data(request):
     cores = {
             "culturals@iitmparadox.org": "Cultural",
             "technicals@iitmparadox.org": "Technical",
-            "sports@iitmparadox.org": "Sports"
+            "sports@iitmparadox.org": "Sports",
+            "manishsuresh993@gmail.com": "Technical"
             }
     user = request.user
     category = cores.get(user.email, None)
