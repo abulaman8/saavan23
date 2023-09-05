@@ -116,6 +116,8 @@ def register_event(request, id):
         event = Event.objects.get(id=id)
     except Event.DoesNotExist:
         return Response({'message': 'Event does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if not event.open:
+        return Response({'message': 'Rgistrtations closed for event'}, status.HTTP_400_BAD_REQUEST)
     if event in student.events.all():
         return Response({'message': 'Already registered'}, status=status.HTTP_400_BAD_REQUEST)
     if event.is_team_event:
