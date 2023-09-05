@@ -117,6 +117,7 @@ def get_all_participants_data(request):
         data = StudentEventApplicationSerializer(applications, many=True).data
         return Response(data, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @student_required
 def get_core_application_data(request):
@@ -128,6 +129,33 @@ def get_core_application_data(request):
             }
     user = request.user
     category = cores.get(user.email, None)
+    if user.email == "secretaries@iitmparadox.org":
+        events = Event.objects.all()
+        team_applications = []
+        solo_applications = []
+        for event in events:
+            if event.is_team_event:
+                applications = StudentTeamEventApplictaion.objects.filter(event=event).all().prefetch_related(
+                        'team',
+                        'team__members',
+                        'team__members__events',
+                        'team__members__user',
+                        'event',
+                        )
+                team_applications.extend(applications)
+            else:
+                applications = StudentEventApplication.objects.filter(event=event).all().prefetch_related(
+                        'student',
+                        'student__user',
+                        'student__events',
+                        'event',
+                        )
+                solo_applications.extend(applications)
+        team_applications_data = StudentTeamEventApplictaionSerializer(team_applications, many=True).data
+        solo_applications_data = StudentEventApplicationSerializer(solo_applications, many=True).data
+        return Response({'team_applications': team_applications_data,
+                         'solo_applications': solo_applications_data}, status=status.HTTP_200_OK)
+
     if category:
         category_object = Category.objects.get(name=category)
         events = Event.objects.filter(category=category_object).all()
