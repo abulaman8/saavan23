@@ -61,7 +61,7 @@ class SimpleEventSerializer(ModelSerializer):
                 'id', 'name', 'category', 'date',
                 'location', 'registration_start_date', 'registration_end_date',
                 'date', 'website_links', 'header_image',
-                'is_team_event'
+                'is_team_event', 'open'
                 ]
 
 

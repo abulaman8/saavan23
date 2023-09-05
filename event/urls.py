@@ -11,5 +11,7 @@ urlpatterns = [
         path('add-winners/', views.add_winners, name='add-winners'),
         path('set-template/<int:id>/', views.setup_template, name='set-template'),
         path('set-header-image/<int:id>/', views.add_header_image, name='set-header-image'),
-        path('<str:category>/', views.get_events_by_category, name='get-events-by-category')
+        path('<str:category>/', views.get_events_by_category, name='get-events-by-category'),
+        path('open/<int:id>/', views.open_registration, name='open-registration'),
+        path('close/<int:id>/', views.close_registration, name='close-registration'),
         ]

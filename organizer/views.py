@@ -9,6 +9,7 @@ from student.serializers import (
         )
 from .models import EventHead
 from student.models import Student, StudentTeam, StudentTeamEventApplictaion, StudentEventApplication
+from student.views import student_required
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -115,3 +116,44 @@ def get_all_participants_data(request):
         applications = StudentEventApplication.objects.filter(event=event).all()
         data = StudentEventApplicationSerializer(applications, many=True).data
         return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@student_required
+def get_core_application_data(request):
+    cores = {
+            "culturals@iitmparadox.org": "Cultural",
+            "technicals@iitmparadox.org": "Technical",
+            "sports@iitmparadox.org": "Sports"
+            }
+    user = request.user
+    category = cores.get(user.email, None)
+    if category:
+        category_object = Category.objects.get(name=category)
+        events = Event.objects.filter(category=category_object).all()
+        team_applications = []
+        solo_applications = []
+        for event in events:
+            if event.is_team_event:
+                applications = StudentTeamEventApplictaion.objects.filter(event=event).all().prefetch_related(
+                        'team',
+                        'team__members',
+                        'team__members__events',
+                        'team__members__user',
+                        'event',
+                        )
+                team_applications.extend(applications)
+            else:
+                applications = StudentEventApplication.objects.filter(event=event).all().prefetch_related(
+                        'student',
+                        'student__user',
+                        'student__events',
+                        'event',
+                        )
+                solo_applications.extend(applications)
+        team_applications_data = StudentTeamEventApplictaionSerializer(team_applications, many=True).data
+        solo_applications_data = StudentEventApplicationSerializer(solo_applications, many=True).data
+        return Response({'team_applications': team_applications_data,
+                         'solo_applications': solo_applications_data}, status=status.HTTP_200_OK)
+
+    else:
+        return Response({'message': 'You are not a core member'}, status=status.HTTP_403_FORBIDDEN)
